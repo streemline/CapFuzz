@@ -29,7 +29,10 @@ class XSS:
         """
         XSS Fuzzing Request
         """
-        if not any(x in self.fuzzer_options["active_fuzzers"] for x in ["fuzz_xss", "all"]):
+        if all(
+            x not in self.fuzzer_options["active_fuzzers"]
+            for x in ["fuzz_xss", "all"]
+        ):
             return
         self.write("Generating XSS Fuzz Flows")
         for flow in flows:

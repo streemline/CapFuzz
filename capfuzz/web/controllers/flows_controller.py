@@ -30,15 +30,17 @@ class DashboardHandler(tornado.web.RequestHandler):
                 return
             flows = load_flows(get_flow_file(project))
             sorted_flows = get_sorted_flows(flows)
+            flows_dir = settings.FLOWS_DIR
             exclude_matches = settings.SKIP_URL_MATCH
             exclude_file_ext = settings.SKIP_FILE_EXTS
             exclude_resp_code = settings.EXCLUDE_RESP_CODE
             fuzzers = settings.FUZZERS
-            projects = []
-            flows_dir = settings.FLOWS_DIR
-            for file in os.listdir(flows_dir):
-                if file.endswith(".flows"):
-                    projects.append(rreplace(file, ".flows", "", 1))
+            projects = [
+                rreplace(file, ".flows", "", 1)
+                for file in os.listdir(flows_dir)
+                if file.endswith(".flows")
+            ]
+
             context = {"title": "Fuzz Dashboard",
                        "project": project,
                        "projects": projects,

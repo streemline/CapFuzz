@@ -30,7 +30,10 @@ class PathTraversal:
         """
         Path Traversal Fuzzing Request
         """
-        if not any(x in self.fuzzer_options["active_fuzzers"] for x in ["fuzz_path_traversal", "all"]):
+        if all(
+            x not in self.fuzzer_options["active_fuzzers"]
+            for x in ["fuzz_path_traversal", "all"]
+        ):
             return
         self.write("Generating Path Traversal Fuzz Flows")
         for flow in flows:

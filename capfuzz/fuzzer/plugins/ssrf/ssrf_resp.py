@@ -23,21 +23,19 @@ def response_analyzer(flow, options):
             http_dumper.dump("SSRF via OOB Hash Method")
             http_dumper.dump("=========================")
             http_dumper.save_http(flow)
-    if "ip" in meta:
-        if oob_validator.get_status_by_ip(flow.request.url):
-            write("\nVULN] SSRF via OOB IP Method - %s" %
-                         (flow.request.url), type="danger")
-            http_dumper = HTTPDumper(options["report_file"], True)
-            http_dumper.dump("=======================")
-            http_dumper.dump("SSRF via OOB IP Method")
-            http_dumper.dump("=======================")
-            http_dumper.save_http(flow)
-    if "count" in meta:
-        if oob_validator.get_status_by_count(9):
-            write("\n[VULN] SSRF via OOB Request Count Method - %s" %
-                         (flow.request.url), type="danger")
-            http_dumper = HTTPDumper(options["report_file"], True)
-            http_dumper.dump("=================================")
-            http_dumper.dump("SSRF via OOB Request Count Method")
-            http_dumper.dump("=================================")
-            http_dumper.save_http(flow)
+    if "ip" in meta and oob_validator.get_status_by_ip(flow.request.url):
+        write("\nVULN] SSRF via OOB IP Method - %s" %
+                     (flow.request.url), type="danger")
+        http_dumper = HTTPDumper(options["report_file"], True)
+        http_dumper.dump("=======================")
+        http_dumper.dump("SSRF via OOB IP Method")
+        http_dumper.dump("=======================")
+        http_dumper.save_http(flow)
+    if "count" in meta and oob_validator.get_status_by_count(9):
+        write("\n[VULN] SSRF via OOB Request Count Method - %s" %
+                     (flow.request.url), type="danger")
+        http_dumper = HTTPDumper(options["report_file"], True)
+        http_dumper.dump("=================================")
+        http_dumper.dump("SSRF via OOB Request Count Method")
+        http_dumper.dump("=================================")
+        http_dumper.save_http(flow)

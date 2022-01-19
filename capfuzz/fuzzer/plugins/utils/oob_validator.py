@@ -11,10 +11,7 @@ class OOBValidator:
     def get_status_by_md5(self, md5):
         try:
             r = requests.get(self.oob_server + "/md5/" + md5)
-            if r.json()["status"] == "yes":
-                return True
-            else:
-                return False
+            return r.json()["status"] == "yes"
         except Exception as exp:
             print("[ERROR] OOBValidator: %s" % exp)
         return False
@@ -36,10 +33,7 @@ class OOBValidator:
     def get_status_by_count(self, count):
         try:
             r = requests.get(self.oob_server + "/ip/ts")
-            if r.json()["count"] >= count:
-                return True
-            else:
-                return False
+            return r.json()["count"] >= count
         except Exception as exp:
             print(
                 "[ERROR] OOBValidator -  Checking Status by Request Count from Cloud Server: %s" % exp)
@@ -61,11 +55,10 @@ class OOBValidator:
             hostname = o.hostname
             if o.port:
                 port = o.port
-            else:
-                if o.scheme == "http":
-                    port = 80
-                elif o.scheme == "https":
-                    port = 443
+            elif o.scheme == "http":
+                port = 80
+            elif o.scheme == "https":
+                port = 443
             result = socket.getaddrinfo(hostname, port, 0, socket.SOCK_STREAM)
             for item in result:
                 ips.append(item[4][0])

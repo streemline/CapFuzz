@@ -47,14 +47,20 @@ def get_flow_file(flow_name, write=False):
     """Get Flow File Safetly"""
     flow_dir = settings.FLOWS_DIR
     requested_path = os.path.join(flow_dir, flow_name + ".flows")
-    if write:
-        if os.path.commonprefix((os.path.realpath(requested_path), flow_dir)) != flow_dir:
-            return False
-        return requested_path
-    else:
-        if os.path.commonprefix((os.path.realpath(requested_path), flow_dir)) == flow_dir and os.path.exists(requested_path):
-            return requested_path
+    if not write:
+        return (
+            requested_path
+            if os.path.commonprefix(
+                (os.path.realpath(requested_path), flow_dir)
+            )
+            == flow_dir
+            and os.path.exists(requested_path)
+            else False
+        )
+
+    if os.path.commonprefix((os.path.realpath(requested_path), flow_dir)) != flow_dir:
         return False
+    return requested_path
 
 def get_report_file(flow_name):
     """Get Flow File Safetly"""

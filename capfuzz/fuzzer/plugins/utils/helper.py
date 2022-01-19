@@ -100,10 +100,7 @@ def get_os_server(flow):
 
 
 def get_content_type_header_name(obj):
-    if "content-type" in obj.headers:
-        return "content-type"
-    else:
-        return "Content-Type"
+    return "content-type" if "content-type" in obj.headers else "Content-Type"
 
 
 def get_md5(data):
@@ -118,10 +115,10 @@ def is_no_scan_ext(flow):
     skip_exts = settings.SKIP_FILE_EXTS
     file_url = url.split("?")[0]
     _, ext = os.path.splitext(file_url)
-    for no_scan_ext, no_scan_mime in skip_exts.items():
-        if no_scan_ext == ext or no_scan_mime in mime:
-            return True
-    return False
+    return any(
+        no_scan_ext == ext or no_scan_mime in mime
+        for no_scan_ext, no_scan_mime in skip_exts.items()
+    )
 
 
 def is_valid_flow(flow, fuzzer_options):
@@ -153,10 +150,11 @@ def is_valid_flow(flow, fuzzer_options):
                 return False
     if fuzzer_options["include_scope"]:
         """Apply include filter only if include is defined, else allow rest of the flow """
-        if any(i_item in flow.request.url for i_item in fuzzer_options["include_scope"]):
-            return True
-        else:
-            return False
+        return any(
+            i_item in flow.request.url
+            for i_item in fuzzer_options["include_scope"]
+        )
+
     return True
 
 def get_filename(path):

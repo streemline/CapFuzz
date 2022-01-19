@@ -83,19 +83,21 @@ class CapFuzz:
                 return
         else:
             flow_file = get_flow_file("default")
-        fuzz_options = {}
-        fuzz_options["mode"] = mode
-        fuzz_options["include_scope"] = []
-        fuzz_options["exclude_scope"] = []
-        fuzz_options["exclude_url_match"] = "on"
-        fuzz_options["exclude_extensions"] = "on"
-        fuzz_options["exclude_response_code"] = "on"
-        fuzz_options["active_fuzzers"] = ["all"]
-        fuzz_options["flow_file"] = flow_file
-        fuzz_options["api_login"] = ""
-        fuzz_options["api_pin"] = ""
-        fuzz_options["api_register"] = ""
-        fuzz_options["write"] = ScanProgress.write
+        fuzz_options = {
+            'mode': mode,
+            'include_scope': [],
+            'exclude_scope': [],
+            'exclude_url_match': 'on',
+            'exclude_extensions': 'on',
+            'exclude_response_code': 'on',
+            'active_fuzzers': ["all"],
+            'flow_file': flow_file,
+            'api_login': '',
+            'api_pin': '',
+            'api_register': '',
+            'write': ScanProgress.write,
+        }
+
         run_fuzzer(fuzz_options)
 
 
@@ -115,7 +117,7 @@ def main():
             signal.signal(signal.SIGTERM, capfuzz.stop_capfuzz)
             signal.signal(signal.SIGINT, capfuzz.stop_capfuzz)
             create_dir([settings.FLOWS_DIR, settings.LOGS_DIR])
-            if ARGS.mode == "capture" or ARGS.mode == "intercept":
+            if ARGS.mode in ["capture", "intercept"]:
                 capfuzz.start_proxy(ARGS.port, ARGS.mode, ARGS.name)
 
             elif ARGS.mode == "fuzz":

@@ -40,7 +40,10 @@ class HeaderChecks:
         """
         Check for Security Headers
         """
-        if not any(x in self.fuzzer_options["active_fuzzers"] for x in ["fuzz_header_checks", "all"]):
+        if all(
+            x not in self.fuzzer_options["active_fuzzers"]
+            for x in ["fuzz_header_checks", "all"]
+        ):
             return
         self.write("Passive Header Checks")
         project_name = get_filename(self.fuzzer_options["flow_file"])

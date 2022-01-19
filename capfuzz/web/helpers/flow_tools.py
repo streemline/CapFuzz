@@ -17,15 +17,11 @@ def load_flows(path):
 
 def get_headers(headers):
     """by default headers are folded by mitmproxy"""
-    headers_dict = {}
-    for key, val in headers.items():
-        headers_dict[key] = val
-    return headers_dict
+    return dict(headers.items())
 
 
 def get_flow_meta(flow):
-    flow_meta = {}
-    flow_meta["id"] = flow.id
+    flow_meta = {'id': flow.id}
     content = flow.request.content.decode(
         "utf-8", "ignore") if flow.request.content else ""
     request_headers = get_headers(flow.request.headers)

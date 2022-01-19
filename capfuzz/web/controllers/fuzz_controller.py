@@ -16,12 +16,14 @@ class FuzzHandler(tornado.web.RequestHandler):
     def post(self):
         operation = self.request.headers.get('X-Operation', '')
         flow_file = get_flow_file(self.get_argument("project", default=""))
-        if not operation == "Start-Fuzz" or not flow_file:
+        if operation != "Start-Fuzz" or not flow_file:
             self.write({"error": "Operation or Project not found!"})
             return
-        options = {}
-        options["mode"] = "fuzz"
-        options["include_scope"] = self.get_arguments("include_scope[]")
+        options = {
+            'mode': 'fuzz',
+            'include_scope': self.get_arguments("include_scope[]"),
+        }
+
         options["exclude_scope"] = self.get_arguments("exclude_scope[]")
         options["active_fuzzers"] = self.get_arguments("active_fuzzers[]")
         options["exclude_url_match"] = self.get_argument(
