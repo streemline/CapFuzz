@@ -37,7 +37,10 @@ class ApiFuzz:
         """
         API Fuzz Request
         """
-        if not any(x in self.fuzzer_options["active_fuzzers"] for x in ["fuzz_api", "all"]):
+        if all(
+            x not in self.fuzzer_options["active_fuzzers"]
+            for x in ["fuzz_api", "all"]
+        ):
             return
         self.auth_apis = self.get_api_flows(flows)
         self.write("Generating API Rate Limit Fuzz Flows")
@@ -84,7 +87,7 @@ class ApiFuzz:
                     b"0", b"5").replace(b"2", b"8").replace(b"5", b"2").replace(b"6", b"1").replace(
                     b"7", b"0").replace(b"8", b"5").replace(b"9", b"3")
                 mutate = True
-        elif api_name == "api_login" or api_name == "api_register":
+        elif api_name in ["api_login", "api_register"]:
             # email in username
             if re.findall(b"%40|@", content):
                 content = content.replace(b"%40", b"%40x").replace(b"@", b"@x")

@@ -20,13 +20,10 @@ def get_ip_n_port_match(value):
 
 
 def get_ipport_match(value):
-    final = []
     value = urllib.parse.unquote(value)
     ips = get_ip_match(value)
     ip_ports =get_ip_n_port_match(value)
-    for ipv4 in ips:
-        if not any(ipv4 in ipp for ipp in ip_ports):
-            final.append(ipv4)
+    final = [ipv4 for ipv4 in ips if all(ipv4 not in ipp for ipp in ip_ports)]
     final += ip_ports
     final = list(set(final))
     return final

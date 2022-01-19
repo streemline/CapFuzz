@@ -43,7 +43,10 @@ class Deserialization:
         """
         Deserialization Fuzzing Request
         """
-        if not any(x in self.fuzzer_options["active_fuzzers"] for x in ["fuzz_deserialization_checks", "all"]):
+        if all(
+            x not in self.fuzzer_options["active_fuzzers"]
+            for x in ["fuzz_deserialization_checks", "all"]
+        ):
             return
         self.write("Generating Deserialization Fuzz Flows")
         for flow in flows:
@@ -111,10 +114,8 @@ class Deserialization:
                         elif b"[PS]" in payload:
                             md5, payload = self.get_final_payload(payload, b"[PS]")
                             meta = {"md5": md5, "fuzz_type": "query", "payload": payload}
-                        elif b"sleep" or b"ping" in payload:
-                            meta = {"blind": 10, "tms":time.time(), "fuzz_type": "query", "payload": payload}
                         else:
-                            meta = {"fuzz_type": "query", "payload": payload}
+                            meta = {"blind": 10, "tms":time.time(), "fuzz_type": "query", "payload": payload}
                         tmp_flow = flow.copy()
                         tmp_flow.request.path = tmp_flow.request.path.replace(urllib.parse.quote(value), urllib.parse.quote(payload.decode("utf-8", "ignore")))
                         tmp_flow.request.path = tmp_flow.request.path.replace(encode_uri(value), encode_uri(payload.decode("utf-8", "ignore")))
@@ -135,10 +136,8 @@ class Deserialization:
                     elif b"[PS]" in payload:
                         md5, payload = self.get_final_payload(payload, b"[PS]")
                         meta = {"md5": md5, "fuzz_type": "body", "payload": payload}
-                    elif b"sleep" or b"ping" in payload:
-                        meta = {"blind": 10, "tms":time.time(), "fuzz_type": "body", "payload": payload}
                     else:
-                        meta = {"fuzz_type": "body", "payload": payload}
+                        meta = {"blind": 10, "tms":time.time(), "fuzz_type": "body", "payload": payload}
                     tmp_flow = flow.copy()
                     tmp_flow.request.content = payload
                     tmp_flow.metadata["fuzz_deserialize"] = meta
@@ -165,14 +164,10 @@ class Deserialization:
         """
         # blank command will store our fixed unicode variable
         data = data.decode("utf-8", "ignore")
-        blank_command = ""
         powershell_command = ""
         # Remove weird chars that could have been added by ISE
         n = re.compile(u'(\xef|\xbb|\xbf)')
-        # loop through each character and insert null byte
-        for char in (n.sub("", data)):
-            # insert the nullbyte
-            blank_command += char + "\x00"
+        blank_command = "".join(char + "\x00" for char in (n.sub("", data)))
         # assign powershell command as the new one
         powershell_command = blank_command
         # base64 encode the powershell command

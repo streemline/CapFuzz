@@ -47,8 +47,7 @@ class Interceptor:
         Called when a server response has been received.
         """
         if b"<!DOCTYPE html>" in flow.response.content:
-            flow.response.content = b"<svg onload=alert('Injected')>" + flow.response.content 
-        pass
+            flow.response.content = b"<svg onload=alert('Injected')>" + flow.response.content
 
     def error(self, flow: http.HTTPFlow) -> None:
         """

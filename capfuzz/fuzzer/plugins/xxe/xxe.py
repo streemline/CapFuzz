@@ -39,7 +39,10 @@ class XXE:
         """
         XXE Fuzzing Request
         """
-        if not any(x in self.fuzzer_options["active_fuzzers"] for x in ["fuzz_xxe", "all"]):
+        if all(
+            x not in self.fuzzer_options["active_fuzzers"]
+            for x in ["fuzz_xxe", "all"]
+        ):
             return
         self.write("Generating XXE Fuzz Flows")
         for flow in flows:

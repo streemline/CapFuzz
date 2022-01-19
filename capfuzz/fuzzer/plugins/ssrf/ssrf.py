@@ -39,7 +39,10 @@ class SSRF:
         """
         SSRF Fuzzing Request
         """
-        if not any(x in self.fuzzer_options["active_fuzzers"] for x in ["fuzz_ssrf", "all"]):
+        if all(
+            x not in self.fuzzer_options["active_fuzzers"]
+            for x in ["fuzz_ssrf", "all"]
+        ):
             return
         self.write("Generating SSRF Fuzz Flows")
         for flow in flows:
@@ -129,6 +132,5 @@ class SSRF:
         return md5, oob_url
 
     def get_final_payload_ipport(self):
-        oob_domain = settings.OUT_OF_BAND_SERVER.replace(
+        return settings.OUT_OF_BAND_SERVER.replace(
             "http://", "").replace("https://", "").replace("/", "")
-        return oob_domain

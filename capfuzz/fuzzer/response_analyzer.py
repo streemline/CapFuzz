@@ -25,9 +25,11 @@ class FuzzResponseAnalyzer:
     def response(self, flow: http.HTTPFlow) -> None:
         flow_file = flow.metadata["flow_file"]
         project_name = get_filename(flow_file)
-        options = {}
-        options["report_file"] = os.path.join(settings.LOGS_DIR, project_name)
-        options["write"] = ScanProgress.write
+        options = {
+            'report_file': os.path.join(settings.LOGS_DIR, project_name),
+            'write': ScanProgress.write,
+        }
+
         if "fuzz_xss" in flow.metadata:
             xss_resp.response_analyzer(flow, options)
         if "fuzz_pathtraversal" in flow.metadata:
